@@ -30,7 +30,7 @@ public class LoginController {
 
     @GetMapping("/login")
     public String showLoginPage() {
-        return "login";  // Return login.jsp
+        return "login";  
     }
 
     @PostMapping("/login")
@@ -39,7 +39,7 @@ public class LoginController {
 
         if (user == null || !user.getPassword().equals(password)) {
             model.addAttribute("errorMessage", "Invalid username or password");
-            return "login";  // Return to login page if credentials are invalid
+            return "login";  
         }
 
         // Set user in session after successful login
@@ -48,14 +48,14 @@ public class LoginController {
 
         // Redirect based on the user's designation
         if ("root".equalsIgnoreCase(user.getDesignation())) {
-            return "redirect:/home";  // Root user's home page
+            return "redirect:/home";  
         } else if ("teacher".equalsIgnoreCase(user.getDesignation())) {
-            return "redirect:/teacherDashboard";  // Teacher's dashboard
+            return "redirect:/teacherDashboard";  
         } else if ("student".equalsIgnoreCase(user.getDesignation())) {
-            return "redirect:/studentDashboard";  // Student's dashboard
+            return "redirect:/studentDashboard";  
         }
 
         model.addAttribute("errorMessage", "Invalid user designation");
-        return "login";  // If no designation matches, return to login page
+        return "login";  
     }
 }

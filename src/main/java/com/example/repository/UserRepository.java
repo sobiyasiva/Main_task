@@ -1,5 +1,7 @@
 package com.example.repository;
 
+import java.util.List;
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,13 @@ public class UserRepository {
             session.beginTransaction();
             session.saveOrUpdate(user);
             session.getTransaction().commit();
+        }
+    }
+
+    public List<User> findAllUsers() {
+        try (Session session = sessionFactory.openSession()) {
+            String hql = "FROM User";
+            return session.createQuery(hql, User.class).list();
         }
     }
 }

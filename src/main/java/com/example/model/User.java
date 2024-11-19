@@ -11,7 +11,6 @@ public class User {
     private String password;
     private String designation;
 
-    // Getters and Setters
     public String getUsername() {
         return username;
     }
