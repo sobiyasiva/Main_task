@@ -4,72 +4,34 @@ document.addEventListener("DOMContentLoaded", () => {
     const closeModal = document.querySelector(".close");
     const cancelButton = document.getElementById("cancelButton");
     const createUserForm = document.getElementById("createUserForm");
-    const loginForm = document.querySelector("form[action='/login']");
 
-    // Open modal for creating user
+    // Open the modal
     createUserButton.addEventListener("click", () => {
         modal.style.display = "block";
     });
 
-    // Close modal on clicking 'X'
+    // Close the modal on 'X' click
     closeModal.addEventListener("click", () => {
         modal.style.display = "none";
     });
 
-    // Close modal on clicking 'Cancel'
+    // Close the modal on cancel button click
     cancelButton.addEventListener("click", () => {
         modal.style.display = "none";
     });
 
-    // Handle Create User Form Submission
+    // Submit form after password confirmation validation
     createUserForm.addEventListener("submit", (event) => {
-        event.preventDefault();
+        const password = document.getElementById("password").value;
+        const confirmPassword = document.getElementById("confirmPassword").value;
 
-        // Simulate form submission (AJAX or server-side)
-        const formData = new FormData(createUserForm);
-        
-        fetch('/createUser', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())  // Assuming the server responds with JSON
-        .then(data => {
-            if (data.success) { // Check if user creation was successful
-                createUserForm.reset(); // Reset form fields
-                modal.style.display = "none"; // Close modal
-            } else {
-                alert('Error creating user');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Error creating user');
-        });
-    });
+        if (password !== confirmPassword) {
+            alert("Passwords do not match!");
+            event.preventDefault(); // Prevent form submission
+            return;
+        }
 
-    // Handle Login Form Submission
-    loginForm.addEventListener("submit", (event) => {
-        event.preventDefault();
-
-        // Simulate login form submission (AJAX or server-side)
-        const formData = new FormData(loginForm);
-
-        fetch('/login', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())  // Assuming the server responds with JSON
-        .then(data => {
-            if (data.success) { // Check if login was successful
-                loginForm.reset(); // Reset form fields
-                window.location.href = '/home'; // Redirect or load the dashboard
-            } else {
-                alert('Invalid login credentials');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Error logging in');
-        });
+        // Allow form submission for valid inputs
+        modal.style.display = "none"; // Close modal after form submission
     });
 });

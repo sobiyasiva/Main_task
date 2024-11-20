@@ -41,12 +41,8 @@ public class LoginController {
             model.addAttribute("errorMessage", "Invalid username or password");
             return "login";  
         }
-
-        // Set user in session after successful login
         HttpSession session = request.getSession();
         session.setAttribute("user", user);
-
-        // Redirect based on the user's designation
         if ("root".equalsIgnoreCase(user.getDesignation())) {
             return "redirect:/home";  
         } else if ("teacher".equalsIgnoreCase(user.getDesignation())) {

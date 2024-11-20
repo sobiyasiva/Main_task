@@ -4,7 +4,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const closeModal = document.querySelector(".close");
     const cancelButton = document.getElementById("cancelButton");
     const createUserForm = document.getElementById("createUserForm");
-    const loginForm = document.querySelector("form[action='/login']");
 
     createUserButton.addEventListener("click", () => {
         modal.style.display = "block";
@@ -19,17 +18,15 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     createUserForm.addEventListener("submit", (event) => {
-        event.preventDefault(); 
-        
-        createUserForm.reset();
+        const password = document.getElementById("password").value;
+        const confirmPassword = document.getElementById("confirmPassword").value;
 
-        modal.style.display = "none";
+        if (password !== confirmPassword) {
+            alert("Passwords do not match!");
+            event.preventDefault(); 
+            return;
+        }
+
+        modal.style.display = "none"; 
     });
-
-    loginForm.addEventListener("submit", (event) => {
-        event.preventDefault(); 
-        loginForm.reset();
-
-    });
-
 });

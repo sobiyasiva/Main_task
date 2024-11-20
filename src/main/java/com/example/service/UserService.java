@@ -17,7 +17,6 @@ public class UserService {
     public void createRootUserIfNotExists() {
         User existingRootUser = userRepository.findByUsername("root");
         if (existingRootUser == null) {
-            // Create and save root user if it doesn't exist
             User rootUser = new User();
             rootUser.setUsername("root");
             rootUser.setPassword("Password"); 
@@ -32,5 +31,8 @@ public class UserService {
 
     public List<User> getAllUsers() {
         return userRepository.findAllUsers(); 
+    }
+    public List<User> getUsersByDesignation(String designation) {
+        return userRepository.findByDesignation(designation);
     }
 }

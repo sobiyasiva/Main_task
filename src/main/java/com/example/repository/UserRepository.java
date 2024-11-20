@@ -38,4 +38,12 @@ public class UserRepository {
             return session.createQuery(hql, User.class).list();
         }
     }
+    public List<User> findByDesignation(String designation) {
+        try (Session session = sessionFactory.openSession()) {
+            String hql = "FROM User WHERE designation = :designation";
+            return session.createQuery(hql, User.class)
+                          .setParameter("designation", designation)
+                          .list();
+        }
+    }
 }
