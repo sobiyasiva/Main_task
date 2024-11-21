@@ -5,33 +5,39 @@ document.addEventListener("DOMContentLoaded", () => {
     const cancelButton = document.getElementById("cancelButton");
     const createUserForm = document.getElementById("createUserForm");
 
-    // Open the modal
     createUserButton.addEventListener("click", () => {
-        modal.style.display = "block";
+        modal.style.display = "block"; // Show the modal when "Create User" is clicked
     });
 
-    // Close the modal on 'X' click
     closeModal.addEventListener("click", () => {
-        modal.style.display = "none";
+        modal.style.display = "none"; // Close the modal when the close button is clicked
     });
 
-    // Close the modal on cancel button click
     cancelButton.addEventListener("click", () => {
-        modal.style.display = "none";
+        modal.style.display = "none"; // Close the modal when the cancel button is clicked
     });
 
-    // Submit form after password confirmation validation
     createUserForm.addEventListener("submit", (event) => {
+        const username = document.getElementById("username").value;
         const password = document.getElementById("password").value;
         const confirmPassword = document.getElementById("confirmPassword").value;
 
+        // Check if username contains numbers
+        if (/\d/.test(username)) {
+            alert("Username should not contain numbers.");
+            event.preventDefault(); // Prevent form submission
+            return; // Keep the modal open
+        }
+
+        // Check if passwords match
         if (password !== confirmPassword) {
             alert("Passwords do not match!");
             event.preventDefault(); // Prevent form submission
-            return;
+            return; // Keep the modal open
         }
 
-        // Allow form submission for valid inputs
-        modal.style.display = "none"; // Close modal after form submission
+        // Close the modal if validation passes
+        modal.style.display = "none";
+        showToast("User added successfully.", "add");
     });
 });

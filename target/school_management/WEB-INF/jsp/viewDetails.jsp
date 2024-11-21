@@ -3,25 +3,27 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>User Details</title>
+    <title>Teacher Details</title>
     <link rel="stylesheet" href="<c:url value='/css/home.css' />">
 </head>
 <body>
-    <h1>User Details</h1>
+    <h1>Teacher Details</h1>
     <table border="1">
         <thead>
             <tr>
+                <th>ID</th>
+                <th>Experience</th>
+                <th>Subject</th>
                 <th>Username</th>
-                <th>Designation</th>
-                <th>Password</th>
             </tr>
         </thead>
         <tbody>
-            <c:forEach var="user" items="${users}">
+            <c:forEach var="teacher" items="${teachers}">
                 <tr>
-                    <td>${user.username}</td>
-                    <td>${user.designation}</td>
-                    <td>${user.password}</td>
+                    <td>${teacher.id}</td>
+                    <td>${teacher.experience}</td>
+                    <td>${teacher.subject}</td>
+                    <td>${teacher.username}</td>
                 </tr>
             </c:forEach>
         </tbody>
@@ -29,7 +31,5 @@
     <form id="backForm" method="GET" action="<c:url value='/home' />">
         <button type="submit" id="backButton">Back</button>
     </form>
-    
-  
 </body>
 </html>

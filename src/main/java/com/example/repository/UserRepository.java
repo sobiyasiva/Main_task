@@ -46,4 +46,16 @@ public class UserRepository {
                           .list();
         }
     }
+    public void assignTeacherToStudent(String studentUsername, String teacherUsername) {
+        try (Session session = sessionFactory.openSession()) {
+            session.beginTransaction();
+            String sql = "INSERT INTO student_teacher (student_username, teacher_username) VALUES (:studentUsername, :teacherUsername)";
+            session.createNativeQuery(sql)
+                   .setParameter("studentUsername", studentUsername)
+                   .setParameter("teacherUsername", teacherUsername)
+                   .executeUpdate();
+            session.getTransaction().commit();
+        }
+    }
+    
 }

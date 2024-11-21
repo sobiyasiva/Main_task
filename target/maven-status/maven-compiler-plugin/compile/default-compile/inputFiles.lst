@@ -1,5 +1,9 @@
 C:\school_management\src\main\java\com\example\service\UserService.java
 C:\school_management\src\main\java\com\example\model\User.java
 C:\school_management\src\main\java\com\example\controller\LoginController.java
+C:\school_management\src\main\java\com\example\model\TeacherDetails.java
+C:\school_management\src\main\java\com\example\repository\StudentTeacherAssignmentRepository.java
+C:\school_management\src\main\java\com\example\model\StudentTeacherAssignment.java
 C:\school_management\src\main\java\com\example\controller\HomeController.java
+C:\school_management\src\main\java\com\example\repository\TeacherDetailsRepository.java
 C:\school_management\src\main\java\com\example\repository\UserRepository.java

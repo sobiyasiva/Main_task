@@ -33,23 +33,20 @@
             background-color: #45a049;
         }
 
-        /* Modal styles */
         .modal {
-            display: none; /* Hidden by default */
+            display: none; 
             position: fixed;
-            z-index: 1; /* Sit on top */
+            z-index: 1; 
             left: 0;
             top: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
-            overflow: auto; /* Enable scrolling if needed */
-            padding-top: 50px;
+            background-color: rgba(0, 0, 0, 0.5); 
         }
 
         .modal-content {
             background-color: #fff;
-            margin: 6% auto;
+            margin: auto;
             padding: 20px;
             border-radius: 8px;
             width: 400px;
@@ -57,7 +54,6 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
-        /* Close button styles */
         .close-btn {
             color: #aaa;
             font-size: 28px;
@@ -122,15 +118,90 @@
             background-color: orange;
         }
 
+/* Custom Dropdown styles */
+.dropdown {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.dropdown-button {
+    padding: 10px;
+    font-size: 16px;
+    width: 100%;
+    text-align: left;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: black; /* Change text color to black */
+}
+
+.dropdown-list {
+    display: none;
+    position: absolute;
+    background-color: white;
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1;
+    max-height: 200px;
+    overflow-y: auto;
+    padding: 10px; /* Adds padding for better spacing */
+}
+
+.dropdown-list.show {
+    display: block;
+}
+
+.dropdown-item {
+    padding: 5px;
+    cursor: pointer;
+    color: black; /* Change text color to black for dropdown items */
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* Ensures checkbox and label are aligned */
+}
+
+.dropdown-item:hover {
+    background-color: #f1f1f1;
+}
+
+.dropdown-item input[type="checkbox"] {
+    margin-right: 10px; /* Adds space between checkbox and text */
+    vertical-align: middle; /* Aligns checkbox vertically with the label */
+}
+
+/* Optional: Additional styling for checkboxes */
+.dropdown-item input[type="checkbox"]:checked {
+    background-color: #4CAF50; /* Style for checked checkbox */
+    border-radius: 4px;
+}
+
+
+    #assign-button{
+        margin-top:60%;
+        display: inline-block;
+    }
+
+    #logoutForm {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+        }
     </style>
     <script>
-        // Toggle modal visibility for subject assignment
+        let selectedTeachersCount = 0;
+
         function toggleAssignSubjects() {
             const modal = document.getElementById("assignSubjectsModal");
             modal.style.display = (modal.style.display === "flex") ? "none" : "flex";
         }
 
-        // Show toast notifications with various types
         function showToast(message, type = 'default') {
             const toastContainer = document.querySelector('.toast-container');
             const toast = document.createElement('div');
@@ -150,28 +221,70 @@
             }, 3000);
         }
 
-        // Handle the assignment of subjects (form submission)
-        function handleAssignSubjects(event) {
-            event.preventDefault(); // Prevent form submission and page redirect
-
-            // Get selected teachers
-            const selectedTeachers = document.querySelectorAll('input[name="selectedTeachers"]:checked');
-
-            if (selectedTeachers.length > 0) {
-                // Show success toast
-                showToast("Teachers assigned successfully!", "add");
-                toggleAssignSubjects(); // Close the modal after assignment
-            } else {
-                // Show error toast if no teachers selected
-                showToast("No teachers selected. Please choose teachers to assign.", "error");
-            }
-
-            // Optional: Submit data to server using AJAX here
+        function toggleDropdown() {
+            const dropdownList = document.getElementById("teacherDropdownList");
+            dropdownList.classList.toggle("show");
         }
 
+        function selectTeacher(checkbox) {
+            const maxSelection = 3;
+
+            if (checkbox.checked) {
+                selectedTeachersCount++;
+            } else {
+                selectedTeachersCount--;
+            }
+
+            // Restrict to 3 selections
+            if (selectedTeachersCount > maxSelection) {
+                checkbox.checked = false;
+                selectedTeachersCount--;
+                showToast("You can select a maximum of 3 teachers.", "error");
+            }
+
+            // Update the dropdown button text
+            const selectedTeachers = [];
+            const checkboxes = document.querySelectorAll(".teacher-checkbox:checked");
+            checkboxes.forEach(checkbox => selectedTeachers.push(checkbox.value));
+            const dropdownButton = document.getElementById("teacherDropdownButton");
+            dropdownButton.textContent = selectedTeachers.length > 0 ? selectedTeachers.join(", ") : "Select Faculties";
+        }
+
+        function handleAssignSubjects(event) {
+            event.preventDefault();
+
+            const selectedTeachers = document.querySelectorAll(".teacher-checkbox:checked");
+
+            if (selectedTeachers.length > 0) {
+                showToast("Teachers assigned successfully!", "add");
+                toggleAssignSubjects();
+            } else {
+                showToast("No teachers selected. Please choose teachers to assign.", "error");
+            }
+        }
+// Function to confirm logout
+function confirmLogout(event) {
+            event.preventDefault(); // Prevent form submission
+
+            const userConfirmed = confirm("Are you sure you want to log out?");
+            if (userConfirmed) {
+                // If user confirmed, submit the form
+                document.getElementById("logoutForm").submit();
+            }
+        }
+
+        // Adding event listener for the logout button
+        document.addEventListener('DOMContentLoaded', function() {
+            const logoutButton = document.querySelector('#logoutForm button');
+            logoutButton.addEventListener('click', confirmLogout);
+        });
     </script>
 </head>
 <body>
+        <!-- Logout Button -->
+        <form id="logoutForm" method="POST" action="<c:url value='/login' />" style="display: inline;">
+            <button type="submit">Logout</button>
+        </form>
     <h1>Welcome, Student!</h1>
     <p>This is the student's dashboard.</p>
 
@@ -190,25 +303,43 @@
             <p>Select teachers to assign subjects:</p>
             
             <form method="POST" onsubmit="handleAssignSubjects(event)">
-                <div class="teacher-list">
-                    <c:forEach var="teacher" items="${teachers}">
-                        <div>
-                            <input type="checkbox" id="${teacher.username}" name="selectedTeachers" value="${teacher.username}">
-                            <label for="${teacher.username}">${teacher.username}</label>
-                        </div>
-                    </c:forEach>
+                <!-- Custom Dropdown for Teachers -->
+                <div class="dropdown">
+                    <button type="button" class="dropdown-button" id="teacherDropdownButton" onclick="toggleDropdown()">Select Faculties</button>
+                    <div id="teacherDropdownList" class="dropdown-list">
+                        <c:forEach var="teacher" items="${teachers}">
+                            <div class="dropdown-item">
+                                <input type="checkbox" class="teacher-checkbox" value="${teacher.username}" onclick="selectTeacher(this)">
+                                ${teacher.username}
+                            </div>
+                        </c:forEach>
+                    </div>
                 </div>
-                <button type="submit">Assign</button>
+                
+                <button type="submit" id="assign-button">Assign</button>
             </form>
             
-            <button type="button" onclick="toggleAssignSubjects()">Cancel</button>
+            <button type="button" id="cancel-button" onclick="toggleAssignSubjects()">Cancel</button>
         </div>
     </div>
 
-    <!-- Toast Notification Container -->
     <div class="toast-container"></div>
     <form id="backForm" method="GET" action="<c:url value='/home' />">
         <button type="submit" id="backButton">Back</button>
     </form>
+
+    <%-- Display success or error message --%>
+    <c:if test="${not empty successMessage}">
+        <div class="alert alert-success">
+            ${successMessage}
+        </div>
+    </c:if>
+
+    <c:if test="${not empty errorMessage}">
+        <div class="alert alert-danger">
+            ${errorMessage}
+        </div>
+    </c:if>
+
 </body>
 </html>
