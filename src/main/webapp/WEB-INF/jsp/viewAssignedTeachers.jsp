@@ -56,6 +56,7 @@
         }
 
         .back-button {
+            width:7%;
             display: block;
             margin: 20px auto;
             padding: 10px 20px;
