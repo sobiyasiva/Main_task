@@ -1,94 +1,153 @@
 package com.example.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.example.model.StudentTeacherAssignment;
-import com.example.model.TeacherDetails;
-import com.example.model.User;
-import com.example.repository.StudentTeacherAssignmentRepository;
-import com.example.repository.TeacherDetailsRepository;
-import com.example.repository.UserRepository;
+import com.example.model.Student;
+import com.example.model.Teacher;
+import com.example.repository.StudentRepository;
+import com.example.repository.TeacherRepository;
 
 @Service
 public class UserService {
 
     @Autowired
-    private UserRepository userRepository;
+    private StudentRepository studentRepository;
 
-    public void createRootUserIfNotExists() {
-        User existingRootUser = userRepository.findByUsername("root");
-        if (existingRootUser == null) {
-            User rootUser = new User();
-            rootUser.setUsername("root");
-            rootUser.setPassword("Password");
-            rootUser.setDesignation("root");
-            userRepository.save(rootUser);
+    @Autowired
+    private TeacherRepository teacherRepository;
+
+    @Transactional
+    public Object login(String email, String password) {
+        Student student = studentRepository.findByEmailAndPassword(email, password);
+        if (student != null) {
+            return student;
+        }
+        Teacher teacher = teacherRepository.findByEmailAndPassword(email, password);
+        if (teacher != null) {
+            return teacher;
+        }
+
+        addDefaultUsers();
+        return null;
+    }
+
+    @Transactional
+    private void addDefaultUsers() {
+        if (studentRepository.findAll().isEmpty()) {
+            Student rootStudent = new Student();
+            rootStudent.setEmail("sathi@gmail.com");
+            rootStudent.setPassword("see");
+            saveStudent(rootStudent);
+        }
+
+        if (teacherRepository.findAll().isEmpty()) {
+            Teacher rootTeacher = new Teacher();
+            rootTeacher.setEmail("sobi@gmail.com");
+            rootTeacher.setPassword("abc");
+            saveTeacher(rootTeacher);
         }
     }
 
-    public void saveUser(User user) {
-        userRepository.save(user);
+    @Transactional
+    public void saveTeacher(Teacher teacher) {
+        teacherRepository.saveTeacher(teacher);
     }
 
-    public List<User> getAllUsers() {
-        return userRepository.findAllUsers();
+    @Transactional
+    public void saveStudent(Student student) {
+        studentRepository.saveStudent(student);
     }
 
-    public List<User> getUsersByDesignation(String designation) {
-        return userRepository.findByDesignation(designation);
+    @Transactional(readOnly = true)
+    public List<Student> getStudents() {
+        return studentRepository.findAll();
     }
 
-
-     @Autowired
-    private TeacherDetailsRepository teacherDetailsRepository;
-
-    public void saveUser(User user, String subject, int experience) {
-        userRepository.save(user);
-
-        if ("Teacher".equalsIgnoreCase(user.getDesignation())) {
-            TeacherDetails teacherDetails = new TeacherDetails();
-            teacherDetails.setUsername(user.getUsername());
-            teacherDetails.setSubject(subject);
-            teacherDetails.setExperience(experience);
-
-            teacherDetailsRepository.save(teacherDetails);
-        }
+    @Transactional(readOnly = true)
+    public List<Teacher> getTeachers() {
+        return teacherRepository.findAll();
     }
-     @Autowired
-    private StudentTeacherAssignmentRepository studentTeacherAssignmentRepository;
 
-    // Other methods...
+    @Transactional
+    public String assignTeacherToStudent(Long studentId, Long teacherId) {
+        Student student = studentRepository.findById(studentId);
+        Teacher teacher = teacherRepository.findById(teacherId);
 
-    // Method to assign teachers to a student
-    public String assignTeachersToStudent(String studentUsername, List<String> teacherUsernames) {
-        if (teacherUsernames.size() != 3) {
-            return "Please select exactly 3 teachers.";
+        if (student == null || teacher == null) {
+            return "Student or Teacher not found!";
         }
 
-        // Find student by username
-        User student = userRepository.findByUsername(studentUsername);
-        if (student == null) {
-            return "Student not found!";
+        if (student.getTeachers().size() >= 3) {
+            return "Student cannot have more than 3 teachers.";
         }
 
-        // Check if the selected teachers exist
-        for (String teacherUsername : teacherUsernames) {
-            User teacher = userRepository.findByUsername(teacherUsername);
-            if (teacher == null || !"Teacher".equalsIgnoreCase(teacher.getDesignation())) {
-                return "One or more selected users are not teachers.";
-            }
-            
-            // Save each teacher assignment to the new table
-            StudentTeacherAssignment assignment = new StudentTeacherAssignment();
-            assignment.setStudentUsername(studentUsername);
-            assignment.setTeacherUsername(teacherUsername);
-            studentTeacherAssignmentRepository.save(assignment);
-        }
+        student.getTeachers().add(teacher);
+        teacher.getStudents().add(student);
 
-        return "Teachers successfully assigned to student " + studentUsername;
+        studentRepository.saveStudent(student);
+        teacherRepository.saveTeacher(teacher);
+
+        return "Teacher assigned successfully!";
     }
+
+    @Transactional(readOnly = true)
+    public Student getStudentById(Long id) {
+        return studentRepository.findById(id);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Student> getAllStudents() {
+        return studentRepository.findAll();
+    }
+
+    @Transactional
+    public void assignTeacherToStudent(Student student, Teacher teacher) {
+        student.getTeachers().add(teacher);
+        studentRepository.saveStudent(student);
+    }
+
+    @Transactional(readOnly = true)
+    public Teacher getTeacherById(Long id) {
+        return teacherRepository.findById(id);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Teacher> getAssignedTeachersForStudent(Long studentId) {
+        Student student = studentRepository.findById(studentId);
+        if (student != null) {
+            return new ArrayList<>(student.getTeachers()); 
+        }
+        return new ArrayList<>();
+    }
+    @Transactional(readOnly = true)
+public List<Student> getStudentsAssignedToTeacher(Long teacherId) {
+    Teacher teacher = teacherRepository.findById(teacherId);
+
+    if (teacher != null) {
+        return new ArrayList<>(teacher.getStudents()); 
+    }
+    return new ArrayList<>();
+}
+@Transactional(readOnly = true)
+public Object getUserByEmail(String email) {
+    Student student = studentRepository.findByEmail(email);
+    if (student != null) {
+        return student;
+    }
+    Teacher teacher = teacherRepository.findByEmail(email);
+    if (teacher != null) {
+        return teacher;
+    }
+
+    return null; 
 }
 
+    
+    
+
+}

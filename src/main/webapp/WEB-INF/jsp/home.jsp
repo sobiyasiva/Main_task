@@ -26,6 +26,7 @@
             color: #fff;
             border-radius: 3px;
             opacity: 0;
+            transition: opacity 0.5s;
         }
         .toast.show {
             opacity: 1;
@@ -45,7 +46,6 @@
         .hidden {
             display: none;
         }
-        /* Style for the teacher details table */
         .teacher-table {
             width: 100%;
             border-collapse: collapse;
@@ -56,106 +56,182 @@
         }
     </style>
     <script>
-        // Function to show toast messages
-        function showToast(message, type = 'default') {
-            const toastContainer = document.querySelector('.toast-container');
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            toast.textContent = message;
-            toastContainer.appendChild(toast);
+        document.addEventListener("DOMContentLoaded", () => {
+            // Toggle additional fields based on designation
+            function toggleAdditionalFields() {
+                const teacherFields = document.getElementById("teacherFields");
+                const studentFields = document.getElementById("studentFields");
+                const designation = document.querySelector('input[name="designation"]:checked')?.value;
 
-            setTimeout(() => {
-                toast.classList.add('show');
-            }, 100);
-
-            setTimeout(() => {
-                toast.classList.remove('show');
-                setTimeout(() => {
-                    toastContainer.removeChild(toast);
-                }, 300);
-            }, 3000);
-        }
-
-        // Function to confirm logout
-        function confirmLogout(event) {
-            event.preventDefault();
-            const userConfirmed = confirm("Are you sure you want to log out?");
-            if (userConfirmed) {
-                document.getElementById("logoutForm").submit();
+                if (designation === "Teacher") {
+                    teacherFields.classList.remove("hidden");
+                    studentFields.classList.add("hidden");
+                } else if (designation === "Student") {
+                    studentFields.classList.remove("hidden");
+                    teacherFields.classList.add("hidden");
+                }
             }
-        }
 
-        // Function to toggle additional fields based on designation
-        function toggleAdditionalFields() {
-            const teacherFields = document.getElementById("teacherFields");
-            const designation = document.querySelector('input[name="designation"]:checked').value;
-
-            if (designation === "Teacher") {
-                teacherFields.classList.remove("hidden");
-            } else {
-                teacherFields.classList.add("hidden");
-            }
-        }
-
-        // Adding event listener for the logout button and designation toggle
-        document.addEventListener('DOMContentLoaded', function () {
-            const logoutButton = document.querySelector('#logoutForm button');
-            logoutButton.addEventListener('click', confirmLogout);
-
+            // Add event listeners for designation radio buttons
             const designationRadios = document.querySelectorAll('input[name="designation"]');
             designationRadios.forEach(radio => {
                 radio.addEventListener('change', toggleAdditionalFields);
             });
+
+            // Modal handling
+            const createUserButton = document.getElementById("createUserButton");
+            const modal = document.getElementById("createUserModal");
+            const closeModal = document.querySelector(".close");
+            const cancelButton = document.getElementById("cancelButton");
+
+            createUserButton.addEventListener("click", () => {
+                modal.style.display = "block";
+            });
+
+            closeModal.addEventListener("click", () => {
+                modal.style.display = "none";
+            });
+
+            cancelButton.addEventListener("click", () => {
+                modal.style.display = "none";
+            });
+
+            // Form submission validation
+            const createUserForm = document.getElementById("createUserForm");
+            createUserForm.addEventListener("submit", (event) => {
+                const email = document.getElementById("email").value;
+                const password = document.getElementById("password").value;
+                const designation = document.querySelector('input[name="designation"]:checked');
+                const staffName = document.getElementById("staffName")?.value || "";
+                const subject = document.getElementById("subject")?.value || "";
+                const experience = document.getElementById("experience")?.value || "";
+                const studentName = document.getElementById("studentName")?.value || "";
+
+                // Email validation
+                const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+                if (!email || !emailRegex.test(email)) {
+                    showToast("Please enter a valid email address.", "error");
+                    event.preventDefault();
+                    return;
+                }
+
+                // Designation selection validation
+                if (!designation) {
+                    showToast("Please select a designation (Teacher or Student).", "error");
+                    event.preventDefault();
+                    return;
+                }
+
+                // Teacher-specific validation
+                if (designation.value === "Teacher") {
+                    if (!staffName || /\d/.test(staffName)) {
+                        showToast("Staff Name should not contain numbers.", "error");
+                        event.preventDefault();
+                        return;
+                    }
+                    if (!subject || /\d/.test(subject)) {
+                        showToast("Subject should not contain numbers.", "error");
+                        event.preventDefault();
+                        return;
+                    }
+                    if (!experience || !/^\d+$/.test(experience)) {
+                        showToast("Years of Experience should only contain numeric values.", "error");
+                        event.preventDefault();
+                        return;
+                    }
+                }
+
+                // Student-specific validation
+                if (designation.value === "Student") {
+                    if (!studentName) {
+                        showToast("Please fill out the student-related fields.", "error");
+                        event.preventDefault();
+                        return;
+                    }
+                }
+
+                modal.style.display = "none";
+                showToast("User added successfully.", "add");
+            });
+
+            // Show error or success messages passed from the controller
+            const errorMessage = "${errorMessage}";
+            const successMessage = "${successMessage}";
+
+            if (errorMessage) {
+                showToast(errorMessage, "error"); // Show error message with 'error' type
+            }
+
+            if (successMessage) {
+                showToast(successMessage, "add"); // Show success message with 'add' type
+            }
         });
+
+        // Toast notification function
+        function showToast(message, type = "default") {
+            const toastContainer = document.querySelector(".toast-container");
+            const toast = document.createElement("div");
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            toastContainer.appendChild(toast);
+
+            setTimeout(() => toast.classList.add("show"), 100);
+            setTimeout(() => {
+                toast.classList.remove("show");
+                setTimeout(() => toastContainer.removeChild(toast), 300);
+            }, 3000);
+        }
+
+        // Logout confirmation
+        function confirmLogout() {
+            return confirm("Are you sure you want to log out?");
+        }
     </script>
 </head>
 <body>
-    <!-- Logout Button -->
-    <form id="logoutForm" method="POST" action="<c:url value='/login' />">
+    <form id="logoutForm" method="POST" action="<c:url value='/logout' />" onsubmit="return confirmLogout();">
         <button type="submit">Logout</button>
     </form>
 
-    <h1>Welcome, Root User!</h1>
+    <h1>Welcome!</h1>
     <button id="createUserButton">Create User</button>
-    <form id="viewTeacherDetailsForm" method="GET" action="<c:url value='/viewTeachers' />">
-        <button type="submit" id="viewTeacherDetailsButton">View Teacher Details</button>
+    <form id="viewTeacherDetailsForm" method="GET" action="<c:url value='/viewAssignedTeachers' />">
+        <!-- <input type="hidden" name="studentId" value="${student.id}" /> -->
+        <button type="submit">View Assigned Details</button>
     </form>
 
-    <!-- Modal for Creating User -->
-    <div id="createUserModal" class="modal">
+    <div id="createUserModal" class="modal hidden">
         <div class="modal-content">
             <span class="close">&times;</span>
             <h2>Create User</h2>
             <form id="createUserForm" method="POST" action="<c:url value='/createUser' />">
-                <label for="username">Username:</label>
-                <input type="text" id="username" name="username" placeholder="Enter username" required>
-
-                <label>Designation:</label>
-                <div class="radio-group">
-                    <label>
-                        <input type="radio" id="teacher" name="designation" value="Teacher" required>
-                        Teacher
-                    </label>
-                    <label>
-                        <input type="radio" id="student" name="designation" value="Student" required>
-                        Student
-                    </label>
-                </div>
-
-                <!-- Additional Fields for Teachers -->
-                <div id="teacherFields" class="hidden">
-                    <label for="subject">Specialization Subject:</label>
-                    <input type="text" id="subject" name="subject" placeholder="Enter subject specialization">
-
-                    <label for="experience">Years of Experience:</label>
-                    <input type="number" id="experience" name="experience" placeholder="Enter years of experience" min="0">
-                </div>
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" placeholder="Enter email" required>
 
                 <label for="password">Password:</label>
                 <input type="password" id="password" name="password" placeholder="Enter password" required>
 
-                <label for="confirmPassword">Confirm Password:</label>
-                <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Re-enter password" required>
+                <label>Designation:</label>
+                <div class="radio-group">
+                    <label><input type="radio" name="designation" value="Teacher" required>Teacher</label>
+                    <label><input type="radio" name="designation" value="Student" required>Student</label>
+                </div>
+
+                <div id="teacherFields" class="hidden">
+                    <label for="staffName">Staff Name:</label>
+                    <input type="text" id="staffName" name="staffName">
+
+                    <label for="subject">Subject:</label>
+                    <input type="text" id="subject" name="subject">
+
+                    <label for="experience">Years of Experience:</label>
+                    <input type="text" id="experience" name="experience">
+                </div>
+
+                <div id="studentFields" class="hidden">
+                    <label for="studentName">Student Name:</label>
+                    <input type="text" id="studentName" name="studentName">
+                </div>
 
                 <div class="modal-buttons">
                     <button type="submit">Submit</button>
@@ -165,32 +241,6 @@
         </div>
     </div>
 
-    <!-- Display Teacher Details Table -->
-    <c:if test="${not empty teachers}">
-        <table class="teacher-table">
-            <thead>
-                <tr>
-                    <th>Username</th>
-                    <th>Designation</th>
-                    <th>Subject</th>
-                    <th>Experience</th>
-                </tr>
-            </thead>
-            <tbody>
-                <c:forEach var="teacher" items="${teachers}">
-                    <tr>
-                        <td>${teacher.username}</td>
-                        <td>${teacher.designation}</td>
-                        <td>${teacher.subject}</td>
-                        <td>${teacher.experience}</td>
-                    </tr>
-                </c:forEach>
-            </tbody>
-        </table>
-    </c:if>
-
     <div class="toast-container"></div>
-
-    <script src="<c:url value='/js/home.js' />"></script>
 </body>
 </html>
