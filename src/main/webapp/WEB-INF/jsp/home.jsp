@@ -4,59 +4,189 @@
 <html>
 <head>
     <title>Root Home</title>
-    <link rel="stylesheet" href="<c:url value='/css/home.css' />">
-    <style>
-        #logoutForm {
-            position: fixed;
-            top: 10px;
-            right: 10px;
-        }
-        .toast-container {
-            position: fixed;
-            top: 10px;
-            left: 10px;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-        }
-        .toast {
-            margin-bottom: 10px;
-            padding: 10px;
-            background-color: #333;
-            color: #fff;
-            border-radius: 3px;
-            opacity: 0;
-            transition: opacity 0.5s;
-        }
-        .toast.show {
-            opacity: 1;
-        }
-        .toast.add {
-            background-color: green;
-        }
-        .toast.edit {
-            background-color: blue;
-        }
-        .toast.delete {
-            background-color: red;
-        }
-        .toast.error {
-            background-color: orange;
-        }
-        .hidden {
-            display: none;
-        }
-        .teacher-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .teacher-table th, .teacher-table td {
-            padding: 8px 12px;
-            border: 1px solid #ddd;
-        }
-    </style>
+    <!-- <link rel="stylesheet" href="<c:url value='/css/home.css' />"> -->
+     <style>
+        /* home.css */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    /* background: linear-gradient(135deg, #6a11cb, #2575fc); */
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 75vh;
+}
+
+h1 {
+    font-size: 2.5rem;
+    text-align: center;
+    margin-bottom: 20px;
+    color:black;
+    text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.7);
+}
+
+button {
+    margin-bottom: 10px;
+    background: linear-gradient(135deg, #ff8a00, #e52e71);
+    color: #fff;
+    font-size: 1rem;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.4);
+}
+
+#logoutForm {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+input[type="email"],
+input[type="password"],
+input[type="text"] {
+    padding: 10px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+    width: 94%;
+}
+
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="text"]:focus {
+    outline: none;
+    border: 2px solid #e52e71;
+}
+
+.radio-group {
+    display: flex;
+    gap: 15px;
+}
+
+.radio-group label {
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.hidden {
+    display: none;
+}
+
+
+.modal {
+    display: none; 
+    position: fixed; 
+    top: 50%;
+    left: 60%; 
+    transform: translate(-50%, -50%); 
+    width: 50%; 
+    height: auto;
+    background-color: white;
+    z-index: 1000; 
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.modal.show, .modal-overlay.show {
+    display: block;
+}
+
+
+.modal-content {
+    background: #fff;
+    color: #333;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.4);
+    width: 90%;
+    max-width: 400px;
+    animation: slide-down 0.5s ease;
+}
+
+.modal-content h2 {
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+    color: black;
+    text-align: center;
+}
+
+@keyframes slide-down {
+    from {
+        transform: translateY(-50%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 2000;
+}
+
+.toast {
+    background: #333;
+    color: #fff;
+    padding: 10px 15px;
+    border-radius: 5px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.toast.success {
+    background: #28a745;
+}
+
+.toast.error {
+    background: #dc3545;
+}
+
+.toast.default {
+    background: #007bff;
+}
+
+     </style>
+   
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
+       document.addEventListener("DOMContentLoaded", () => {
             // Toggle additional fields based on designation
             function toggleAdditionalFields() {
                 const teacherFields = document.getElementById("teacherFields");
@@ -190,8 +320,8 @@
 </head>
 <body>
     <form id="logoutForm" method="POST" action="<c:url value='/logout' />" onsubmit="return confirmLogout();">
-        <button type="submit">Logout</button>
-    </form>
+    <button type="submit">Logout</button>
+</form>
 
     <h1>Welcome!</h1>
     <button id="createUserButton">Create User</button>
@@ -200,7 +330,7 @@
         <button type="submit">View Assigned Details</button>
     </form>
 
-    <div id="createUserModal" class="modal hidden">
+    <div id="createUserModal" class="modal hidden"style="display: none;">
         <div class="modal-content">
             <span class="close">&times;</span>
             <h2>Create User</h2>

@@ -4,153 +4,155 @@
 <html>
 <head>
     <title>Student Dashboard</title>
-    <style>
-        body { 
-            font-family: Arial, sans-serif;
-            text-align: center;
+
+<style>
+ body {
+            font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f9f9f9;
-            overflow-y: auto; 
+            /* background: linear-gradient(135deg, #6a11cb, #2575fc); */
+            color: black;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 75vh;
         }
+
         h1 {
+            font-size: 2.5rem;
+            text-align: center;
             margin-bottom: 20px;
-            color: #333;
+            color: black;
+            text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.7);
         }
+
         button {
-            padding: 10px 20px;
-            margin: 10px;
-            font-size: 16px;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #ff8a00, #e52e71);
             color: #fff;
-            background-color: #4CAF50;
+            font-size: 1rem;
+            padding: 10px 20px;
             border: none;
-            border-radius: 4px;
+            border-radius: 25px;
             cursor: pointer;
-            transition: background-color 0.3s;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
         button:hover {
-            background-color: #45a049;
+            transform: translateY(-3px);
+            box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        #logoutForm {
+            position: absolute;
+            top: 20px;
+            right: 20px;
         }
 
         .modal {
-            display: none; 
+            display: none;
             position: fixed;
-            z-index: 1; 
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5); 
+            top: 50%;
+            left: 65%;
+            transform: translate(-50%, -50%);
+            width: 50%;
+            background-color: white;
+            z-index: 1000;
+            padding: 20px;
+            border-radius: 10px;
         }
 
         .modal-content {
-            background-color: #fff;
-            margin: auto;
+            background: #fff;
+            color: #333;
             padding: 20px;
-            border-radius: 8px;
-            width: 400px;
-            position: relative;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.4);
+            animation: slide-down 0.5s ease;
         }
 
-        .close-btn {
-            color: #aaa;
-            font-size: 28px;
-            font-weight: bold;
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            cursor: pointer;
+        .modal-content h2 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: black;
+            text-align: center;
         }
 
-        .close-btn:hover,
-        .close-btn:focus {
-            color: #000;
-            text-decoration: none;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .teacher-list {
-            margin: 20px 0;
-            max-height: 200px;
-            overflow-y: auto;
+        @keyframes slide-down {
+            from {
+                transform: translateY(-50%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
 
         .toast-container {
             position: fixed;
-            top: 10px;
-            left: 10px;
+            top: 20px;
+            right: 20px;
             display: flex;
             flex-direction: column;
-            align-items: flex-start;
+            gap: 10px;
+            z-index: 2000;
         }
 
         .toast {
-            margin-bottom: 10px;
-            padding: 10px;
-            background-color: #333;
+            background: #333;
             color: #fff;
-            border-radius: 3px;
+            padding: 10px 15px;
+            border-radius: 5px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
             opacity: 0;
+            transform: translateY(-10px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
         }
 
         .toast.show {
             opacity: 1;
+            transform: translateY(0);
         }
 
-        .toast.add {
-            background-color: green;
-        }
-
-        .toast.edit {
-            background-color: blue;
-        }
-
-        .toast.delete {
-            background-color: red;
+        .toast.success {
+            background: #28a745;
         }
 
         .toast.error {
-            background-color: orange;
+            background: #dc3545;
+        }
+
+        .toast.default {
+            background: #007bff;
         }
 
         .dropdown {
-            position: relative;
-            display: inline-block;
-            width: 100%;
+            margin: 15px 0;
         }
 
         .dropdown-button {
-            padding: 10px;
-            font-size: 16px;
             width: 100%;
-            text-align: left;
-            background-color: #fff;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+            background: #007bff;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
             cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            color: black; 
+            text-align: left;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
         }
 
         .dropdown-list {
             display: none;
-            position: absolute;
-            background-color: white;
-            width: 100%;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            z-index: 1;
-            max-height: 200px;
-            overflow-y: auto;
-            padding: 10px; 
+            margin-top: 5px;
+            background: #fff;
+            border-radius: 5px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 10px;
+            color: #333;
         }
 
         .dropdown-list.show {
@@ -158,39 +160,15 @@
         }
 
         .dropdown-item {
-            padding: 5px;
-            cursor: pointer;
-            color: black; 
+            margin-bottom: 10px;
+        }
+
+        .modal-buttons {
             display: flex;
-            align-items: center;
-            justify-content: flex-start; 
+            justify-content: space-between;
+            gap: 10px;
         }
-
-        .dropdown-item:hover {
-            background-color: #f1f1f1;
-        }
-
-        .dropdown-item input[type="checkbox"] {
-            margin-right: 10px; 
-            vertical-align: middle; 
-        }
-
-        .dropdown-item input[type="checkbox"]:checked {
-            background-color: #4CAF50;
-            border-radius: 4px;
-        }
-
-        #assign-button {
-            margin-top: 60%;
-            display: inline-block;
-        }
-
-        #logoutForm {
-            position: fixed;
-            top: 10px;
-            right: 10px;
-        }
-    </style>
+</style>  
     <script>
         let selectedTeachersCount = 0;
 
@@ -315,3 +293,4 @@
     <div class="toast-container"></div>
 </body>
 </html>
+

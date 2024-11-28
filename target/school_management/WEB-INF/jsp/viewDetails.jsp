@@ -5,92 +5,127 @@
 <head>
     <title>Teacher Details</title>
     <style>
+        /* teacher-details.css */
+        
+        /* General Styles */
         body {
-            font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f9;
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(to bottom right, #e3f2fd, #bbdefb);
             color: #333;
-            line-height: 1.6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
 
-        h1 {
-            text-align: center;
-            margin-top: 20px;
-            color: #444;
-        }
-
-        table {
-            width: 80%;
-            margin: 20px auto;
-            border-collapse: collapse;
+        .container {
             background-color: #fff;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.15);
+            border-radius: 10px;
+            padding: 20px;
+            width: 90%;
+            max-width: 900px;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        /* Heading */
+        h1 {
+            font-size: 2rem;
+            text-align: center;
+            color: black;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Table Styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            overflow: hidden;
         }
 
         thead {
-            background-color: #4CAF50; 
-            color: white;
+            background: linear-gradient(135deg, #ff8a00, #e52e71);
+            color: #fff;
         }
 
         thead th {
-            padding: 10px;
-            text-align: center;
-            font-weight: bold;
+            padding: 12px;
             font-size: 1rem;
+            text-align: left;
         }
 
-        tbody tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-
-        tbody td {
-            padding: 10px;
-            text-align: center;
-            border: 1px solid #ddd;
+        tbody tr {
+            border-bottom: 1px solid #e0e0e0;
+            transition: background-color 0.3s ease;
         }
 
         tbody tr:hover {
             background-color: #f1f1f1;
-            transition: background-color 0.3s;
         }
 
-        #backButton {
-            display: block;
-            margin: 20px auto;
-            padding: 10px 20px;
-            background-color: #4CAF50; 
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: background-color 0.3s, transform 0.2s;
+        tbody td {
+            padding: 10px;
+            font-size: 0.9rem;
         }
 
-        #backButton:hover {
-            background-color: #388E3C; 
-            transform: scale(1.05);
-        }
+       /* Button Styles */
+a.back-button {
+    background: linear-gradient(135deg, #ff8a00, #e52e71);
+    display: inline-block;
+    background-color: #1976d2;
+    color: #fff;
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    text-align: center;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    margin-left: 45%;
+}
 
+a.back-button:hover {
+    /* background-color: #1565c0; */
+    transform: scale(1.05);
+}
+
+
+        /* Responsive Design */
         @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+
             table {
-                width: 100%;
+                font-size: 0.9rem;
             }
 
-            thead th, tbody td {
-                font-size: 0.9rem;
-                padding: 8px;
+            button.back-button {
+                font-size: 0.8rem;
             }
+        }
 
-            #backButton {
-                font-size: 0.9rem;
-                padding: 8px 16px;
+        /* Animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
         }
     </style>
+    
 </head>
 <body>
+    <div class="container">
     <h1>Teacher Details</h1>
     <table border="1">
         <thead>
@@ -114,8 +149,7 @@
             </c:forEach>
         </tbody>
     </table>
-    <form id="backForm" method="GET" action="<c:url value='/studentDashboard' />">
-        <button type="submit" id="backButton">Back</button>
-    </form>
+    <a href="<c:url value='/home' />" class="back-button">Back</a>
+    </div>
 </body>
 </html>

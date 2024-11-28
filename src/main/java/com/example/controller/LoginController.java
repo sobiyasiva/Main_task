@@ -52,7 +52,7 @@ public class LoginController {
 
         if (userObject instanceof Student) {
             Student student = (Student) userObject;
-            session.setAttribute("student", student);  // Store the student in the session
+            session.setAttribute("student", student);  
             return "redirect:/studentDashboard"; 
         }
 
@@ -79,12 +79,10 @@ public class LoginController {
         }
 
         model.addAttribute("student", student);
-        
-        // Fetch the list of teachers to display in the form
         List<Teacher> teachers = userService.getTeachers();
         model.addAttribute("teachers", teachers);
 
-        return "studentDashboard"; // Render student dashboard
+        return "studentDashboard"; 
     }
 
     @PostMapping("/createUser")
@@ -98,17 +96,15 @@ public String createUser(
         @RequestParam(required = false) String studentName,
         Model model) {
 
-    // Check if the email already exists in the system
     if (userService.getUserByEmail(email) != null) {
         model.addAttribute("errorMessage", "User with this email already exists.");
-        return "home";  // Return error if user exists
+        return "home";  
     }
 
-    // Handle Teacher creation
     if ("Teacher".equalsIgnoreCase(designation)) {
         if (staffName == null || staffName.isEmpty()) {
             model.addAttribute("errorMessage", "Staff Name is required for Teacher.");
-            return "home"; // Ensure staff name is provided for teachers
+            return "home"; 
         }
         Teacher teacher = new Teacher();
         teacher.setEmail(email);
@@ -122,7 +118,7 @@ public String createUser(
     } else if ("Student".equalsIgnoreCase(designation)) {
         if (studentName == null || studentName.isEmpty()) {
             model.addAttribute("errorMessage", "Student Name is required for Student.");
-            return "home"; // Ensure student name is provided for students
+            return "home"; 
         }
         Student student = new Student();
         student.setEmail(email);
@@ -133,10 +129,10 @@ public String createUser(
         model.addAttribute("successMessage", "Student created successfully.");
     } else {
         model.addAttribute("errorMessage", "Invalid designation.");
-        return "home";  // Return error if designation is invalid
+        return "home";  
     }
 
-    return "redirect:/home";  // Redirect to home page after successful creation
+    return "redirect:/home";  
 }
 
     @GetMapping("/viewDetails")
@@ -148,7 +144,6 @@ public String createUser(
 
     @GetMapping("/viewAssignedTeachers")
 public String viewAssignedTeachers(HttpSession session, Model model) {
-    // Retrieve the logged-in user from the session
     Object loggedInUser = session.getAttribute("teacher");
     if (loggedInUser == null) {
         loggedInUser = session.getAttribute("student");
@@ -158,49 +153,42 @@ public String viewAssignedTeachers(HttpSession session, Model model) {
         model.addAttribute("error", "No valid user session found. Please log in.");
         return "redirect:/login";
     }
-
-    // If the logged-in user is a Teacher, fetch their assigned students
     if (loggedInUser instanceof Teacher) {
         Teacher teacher = (Teacher) loggedInUser;
-
-        // Fetch assigned students for the teacher
         List<Student> assignedStudents = userService.getStudentsAssignedToTeacher(teacher.getId());
         if (assignedStudents == null || assignedStudents.isEmpty()) {
             model.addAttribute("message", "No students assigned to you.");
         } else {
-            model.addAttribute("assignedTeachers", assignedStudents); // Match JSP variable
+            model.addAttribute("assignedTeachers", assignedStudents); 
         }
 
         return "viewAssignedTeachers";
     }
 
-    // If the logged-in user is a Student, prevent them from viewing this page
     if (loggedInUser instanceof Student) {
         model.addAttribute("message", "Students cannot view this page.");
-        return "home"; // Redirect to a student-appropriate page
+        return "home"; 
     }
 
-    // If no valid user is logged in, redirect to the login page
+    
     model.addAttribute("error", "You must be logged in to view this page.");
     return "redirect:/login";
     
 }
     
-    // Modified assignTeachers (Retrieve studentId from session)
+    
     @PostMapping("/assignTeachers")
     public String assignTeachers(
-            @RequestParam List<Long> teacherIds,  // List of teacherIds passed from checkboxes
-            HttpSession session, // Get session information
+            @RequestParam List<Long> teacherIds,  
+            HttpSession session, 
             Model model) {
 
-        Student student = (Student) session.getAttribute("student");  // Get student from session
+        Student student = (Student) session.getAttribute("student");  
 
         if (student == null) {
             model.addAttribute("error", "Student is not logged in.");
             return "redirect:/login";
         }
-
-        // Assign each teacher to the student
         for (Long teacherId : teacherIds) {
             Teacher teacher = userService.getTeacherById(teacherId);
             if (teacher != null) {
@@ -209,14 +197,12 @@ public String viewAssignedTeachers(HttpSession session, Model model) {
         }
 
         model.addAttribute("success", "Teachers assigned successfully!");
-        return "redirect:/studentDashboard";  // Redirect after assignment
+        return "redirect:/studentDashboard";  
     }
 
     @RequestMapping("/logout")
     public String logout(HttpSession session) {
-        // Invalidate the session to log the user out
         session.invalidate();
-        // Redirect to the login page or home page
         return "redirect:/login";
     
     }

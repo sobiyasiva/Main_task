@@ -5,72 +5,118 @@
 <head>
     <title>Assigned Students</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f9f9f9;
-        }
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', sans-serif;
+    background: linear-gradient(to bottom right, #e3f2fd, #bbdefb);
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
 
-        h1 {
-            color: #333;
-            text-align: center;
-            margin-top: 20px;
-        }
+.container {
+    background-color: #fff;
+    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.15);
+    border-radius: 10px;
+    padding: 20px;
+    width: 90%;
+    max-width: 800px;
+    animation: fadeIn 1s ease-in-out;
+}
 
-        .container {
-            width: 80%;
-            max-width: 1000px;
-            margin: 20px auto;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
+/* Heading */
+h1 {
+    font-size: 2rem;
+    text-align: center;
+    color: black;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+}
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-        }
+/* Table Styles */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    overflow: hidden;
+}
 
-        table, th, td {
-            border: 1px solid #ddd;
-        }
+thead {
+    background: linear-gradient(135deg, #ff8a00, #e52e71);
+    color: #fff;
+}
 
-        th, td {
-            padding: 10px;
-            text-align: left;
-        }
+thead th {
+    padding: 12px;
+    font-size: 1rem;
+    text-align: left;
+}
 
-        th {
-            background-color: #f4f4f4;
-        }
+tbody tr {
+    border-bottom: 1px solid #e0e0e0;
+    transition: background-color 0.3s ease;
+}
 
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
+tbody tr:hover {
+    background-color: #f1f1f1;
+}
 
-        tr:hover {
-            background-color: #f1f1f1;
-        }
+tbody td {
+    padding: 10px;
+    font-size: 0.9rem;
+}
 
-        .back-button {
-            width:7%;
-            display: block;
-            margin: 20px auto;
-            padding: 10px 20px;
-            font-size: 16px;
-            color: #fff;
-            background-color: #4CAF50;
-            text-decoration: none;
-            text-align: center;
-            border-radius: 4px;
-        }
+/* Button Styles */
+a.back-button {
+    background: linear-gradient(135deg, #ff8a00, #e52e71);
+    display: inline-block;
+    background-color: #1976d2;
+    color: #fff;
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    text-align: center;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    margin-left: 45%;
+}
 
-        .back-button:hover {
-            background-color: #45a049;
-        }
+a.back-button:hover {
+    /* background-color: #1565c0; */
+    transform: scale(1.05);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 1.8rem;
+    }
+
+    table {
+        font-size: 0.9rem;
+    }
+
+    a.back-button {
+        font-size: 0.8rem;
+    }
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
     </style>
 </head>
 <body>
@@ -82,7 +128,6 @@
                 <tr>
                     <th>Student Name</th>
                     <th>Student Email</th>
-                    <!-- <th>Assigned Teachers</th> -->
                 </tr>
             </thead>
             <tbody>
