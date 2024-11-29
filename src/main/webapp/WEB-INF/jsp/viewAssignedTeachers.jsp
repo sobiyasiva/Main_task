@@ -90,7 +90,12 @@ a.back-button:hover {
     /* background-color: #1565c0; */
     transform: scale(1.05);
 }
-
+.table-container {
+    max-height: 400px; /* Set the maximum height of the table container */
+    overflow-y: auto; /* Enable vertical scrolling */
+    border: 1px solid #e0e0e0; /* Optional: Add a border around the scrollable area */
+    border-radius: 8px; /* Optional: Rounded corners */
+}
 /* Responsive Design */
 @media (max-width: 768px) {
     h1 {
@@ -122,7 +127,7 @@ a.back-button:hover {
 <body>
     <div class="container">
         <h1>Assigned Students</h1>
-
+        <div class="table-container">
         <table>
             <thead>
                 <tr>
@@ -139,7 +144,7 @@ a.back-button:hover {
                 </c:forEach>
             </tbody>
         </table>
-
+</div>
         <a href="<c:url value='/home' />" class="back-button">Back</a>
     </div>
 </body>

@@ -29,22 +29,22 @@ h1 {
 }
 
 button {
-    margin-bottom: 10px;
-    background: linear-gradient(135deg, #ff8a00, #e52e71);
-    color: #fff;
-    font-size: 1rem;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 25px;
-    cursor: pointer;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #ff8a00, #e52e71);
+            color: #fff;
+            font-size: 1rem;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
 
-button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.4);
-}
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.4);
+        }
 
 #logoutForm {
     position: absolute;
@@ -95,19 +95,30 @@ input[type="text"]:focus {
     display: none; 
     position: fixed; 
     top: 50%;
-    left: 60%; 
+    left: 50%; 
     transform: translate(-50%, -50%); 
-    width: 50%; 
+    width: 30%; 
     height: auto;
     background-color: white;
     z-index: 1000; 
-    padding: 20px;
+    /* padding: 20px; */
     border-radius: 10px;
 }
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
+    z-index: 999; /* Below the modal but above other content */
+    display: none;
+}
 
-.modal.show, .modal-overlay.show {
+.modal-overlay.show {
     display: block;
 }
+
 
 
 .modal-content {
@@ -138,12 +149,15 @@ input[type="text"]:focus {
         opacity: 1;
     }
 }
+.modal-buttons{
+    margin-left: 25%;
+}
 
-.modal-buttons {
+/* .modal-buttons {
     display: flex;
     justify-content: space-between;
     gap: 10px;
-}
+} */
 
 .toast-container {
     position: fixed;
@@ -182,7 +196,9 @@ input[type="text"]:focus {
 .toast.default {
     background: #007bff;
 }
-
+/* #cancelButton{
+    margin-left: 30%;
+} */
      </style>
    
     <script>
@@ -216,26 +232,73 @@ input[type="text"]:focus {
 
             createUserButton.addEventListener("click", () => {
                 modal.style.display = "block";
+                modalOverlay.classList.add("show");
             });
 
             closeModal.addEventListener("click", () => {
                 modal.style.display = "none";
+                modalOverlay.classList.remove("show");
             });
 
             cancelButton.addEventListener("click", () => {
                 modal.style.display = "none";
+                modalOverlay.classList.remove("show");
             });
 
             // Form submission validation
             const createUserForm = document.getElementById("createUserForm");
             createUserForm.addEventListener("submit", (event) => {
-                const email = document.getElementById("email").value;
-                const password = document.getElementById("password").value;
-                const designation = document.querySelector('input[name="designation"]:checked');
-                const staffName = document.getElementById("staffName")?.value || "";
-                const subject = document.getElementById("subject")?.value || "";
-                const experience = document.getElementById("experience")?.value || "";
-                const studentName = document.getElementById("studentName")?.value || "";
+                const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value.trim();
+        const designation = document.querySelector('input[name="designation"]:checked');
+        const staffName = document.getElementById("staffName")?.value.trim();
+        const subject = document.getElementById("subject")?.value.trim();
+        const experience = document.getElementById("experience")?.value.trim();
+        const studentName = document.getElementById("studentName")?.value.trim();
+  // Empty field validation
+  if (!email) {
+            showToast("Email cannot be empty.", "error");
+            event.preventDefault();
+            return;
+        }
+
+        if (!password) {
+            showToast("Password cannot be empty.", "error");
+            event.preventDefault();
+            return;
+        }
+        if (designation.value === "Teacher") {
+            if (!staffName) {
+                showToast("Staff Name cannot be empty.", "error");
+                event.preventDefault();
+                return;
+            }
+            if (!subject) {
+                showToast("Subject cannot be empty.", "error");
+                event.preventDefault();
+                return;
+            }
+            if (!experience) {
+                showToast("Years of Experience cannot be empty.", "error");
+                event.preventDefault();
+                return;
+            }
+        }
+
+        if (designation.value === "Student") {
+    if (!studentName) {
+        showToast("Student Name cannot be empty.", "error");
+        event.preventDefault();
+        return;
+    }
+    // Check if the student name contains numbers
+    const containsNumbers = /\d/.test(studentName);
+    if (containsNumbers) {
+        showToast("Student Name cannot contain numbers.", "error");
+        event.preventDefault();
+        return;
+    }
+}
 
                 // Email validation
                 const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
@@ -272,13 +335,13 @@ input[type="text"]:focus {
                 }
 
                 // Student-specific validation
-                if (designation.value === "Student") {
-                    if (!studentName) {
-                        showToast("Please fill out the student-related fields.", "error");
-                        event.preventDefault();
-                        return;
-                    }
-                }
+                // if (designation.value === "Student") {
+                //     if (!studentName) {
+                //         showToast("Please fill out the student-related fields.", "error");
+                //         event.preventDefault();
+                //         return;
+                //     }
+                // }
 
                 modal.style.display = "none";
                 showToast("User added successfully.", "add");
@@ -329,8 +392,9 @@ input[type="text"]:focus {
         <!-- <input type="hidden" name="studentId" value="${student.id}" /> -->
         <button type="submit">View Assigned Details</button>
     </form>
-
+    <div id="modalOverlay" class="modal-overlay hidden"></div>
     <div id="createUserModal" class="modal hidden"style="display: none;">
+     
         <div class="modal-content">
             <span class="close">&times;</span>
             <h2>Create User</h2>

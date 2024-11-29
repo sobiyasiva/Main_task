@@ -55,12 +55,12 @@
             display: none;
             position: fixed;
             top: 50%;
-            left: 65%;
+            left: 50%;
             transform: translate(-50%, -50%);
-            width: 50%;
+            width: 20%;
             background-color: white;
             z-index: 1000;
-            padding: 20px;
+            /* padding: 20px; */
             border-radius: 10px;
         }
 
@@ -146,14 +146,16 @@
         }
 
         .dropdown-list {
-            display: none;
-            margin-top: 5px;
-            background: #fff;
-            border-radius: 5px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-            padding: 10px;
-            color: #333;
-        }
+    display: none;
+    margin-top: 5px;
+    background: #fff;
+    border-radius: 5px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    padding: 10px;
+    color: #333;
+    max-height: 200px; /* Set a maximum height for the list */
+    overflow-y: auto;  /* Enable vertical scrolling */
+}
 
         .dropdown-list.show {
             display: block;
@@ -162,21 +164,49 @@
         .dropdown-item {
             margin-bottom: 10px;
         }
-
+/* 
         .modal-buttons {
             display: flex;
             justify-content: space-between;
             gap: 10px;
-        }
+        } */
+
+        .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
+    z-index: 999; /* Below the modal but above other content */
+    display: none;
+}
+.modal-buttons{
+    margin-left: 25%;
+}
+.modal-overlay.show {
+    display: block;
+}
+/* 
+#cancelAssign{
+    margin-left: 30px;
+} */
 </style>  
     <script>
         let selectedTeachersCount = 0;
 
         function toggleAssignSubjects() {
-            const modal = document.getElementById("assignSubjectsModal");
-            modal.style.display = (modal.style.display === "flex") ? "none" : "flex";
-        }
+    const modal = document.getElementById("assignSubjectsModal");
+    const modalOverlay = document.getElementById("modalOverlay");
 
+    if (modal.style.display === "flex") {
+        modal.style.display = "none";
+        modalOverlay.classList.remove("show");
+    } else {
+        modal.style.display = "flex";
+        modalOverlay.classList.add("show");
+    }
+}
         function showToast(message, type = 'default') {
             const toastContainer = document.querySelector('.toast-container');
             const toast = document.createElement('div');
@@ -261,7 +291,7 @@
             <button type="submit">View Details</button>
         </form>
     </div>
-
+    <div id="modalOverlay" class="modal-overlay hidden"></div>
     <div id="assignSubjectsModal" class="modal">
         <div class="modal-content">
             <button class="close-btn" onclick="toggleAssignSubjects()">×</button>
@@ -282,11 +312,13 @@
                         </div>
                     </div>
                 </c:if>
-            
+                <div class="modal-buttons">
                 <button type="button" id="assign-button" onclick="handleAssignSubjects(event)">Assign</button>
+                <button type="button" id="cancelAssign" onclick="toggleAssignSubjects()">Cancel</button>
+                </div>
             </form>
             
-            <button type="button" id="cancelAssign" onclick="toggleAssignSubjects()">Cancel</button>
+            <!-- <button type="button" id="cancelAssign" onclick="toggleAssignSubjects()">Cancel</button> -->
         </div>
     </div>
 
